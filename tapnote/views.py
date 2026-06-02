@@ -16,7 +16,7 @@ def process_markdown_links(html_content):
     replacement = r'<a\1href="\2"\3 target="_blank" rel="noopener noreferrer">'
     html_content = re.sub(pattern, replacement, html_content)
 
-    # Existing anchor-based YouTube embed:
+    # YouTube youtu.be 短链接（anchor）
     anchor_yt_pattern = r'<p><a href="https?://(?:www\.)?youtu\.be/([^"]+)".*?>.*?</a></p>'
     anchor_yt_replacement = (
         r'<iframe width="560" height="315" '
@@ -25,7 +25,16 @@ def process_markdown_links(html_content):
     )
     html_content = re.sub(anchor_yt_pattern, anchor_yt_replacement, html_content)
 
-    # **Added** plain-text YouTube embed (no anchor tag):
+    # YouTube watch?v= 完整链接（anchor）
+    anchor_yt_full_pattern = r'<p><a href="https?://(?:www\.)?youtube\.com/watch\?v=([^&"]+)[^"]*".*?>.*?</a></p>'
+    anchor_yt_full_replacement = (
+        r'<iframe width="560" height="315" '
+        r'src="https://www.youtube.com/embed/\1" '
+        r'frameborder="0" allowfullscreen></iframe>'
+    )
+    html_content = re.sub(anchor_yt_full_pattern, anchor_yt_full_replacement, html_content)
+
+    # YouTube 纯文本链接（youtu.be / youtube.com 均支持）
     plain_yt_pattern = r'<p>https?://(?:www\.)?youtu\.be/([^<]+)</p>'
     plain_yt_replacement = (
         r'<iframe width="560" height="315" '
@@ -33,6 +42,14 @@ def process_markdown_links(html_content):
         r'frameborder="0" allowfullscreen></iframe>'
     )
     html_content = re.sub(plain_yt_pattern, plain_yt_replacement, html_content)
+
+    plain_yt_full_pattern = r'<p>https?://(?:www\.)?youtube\.com/watch\?v=([^&<"]+)(?:&[^<]*)?</p>'
+    plain_yt_full_replacement = (
+        r'<iframe width="560" height="315" '
+        r'src="https://www.youtube.com/embed/\1" '
+        r'frameborder="0" allowfullscreen></iframe>'
+    )
+    html_content = re.sub(plain_yt_full_pattern, plain_yt_full_replacement, html_content)
 
     # Bilibili (B站) BV 号 (anchor): <a href="https://www.bilibili.com/video/BV...">...</a>
     bv_anchor_pattern = (
