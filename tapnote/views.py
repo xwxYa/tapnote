@@ -34,6 +34,48 @@ def process_markdown_links(html_content):
     )
     html_content = re.sub(plain_yt_pattern, plain_yt_replacement, html_content)
 
+    # Bilibili (B站) BV 号 (anchor): <a href="https://www.bilibili.com/video/BV...">...</a>
+    bv_anchor_pattern = (
+        r'<p><a href="https?://(?:www\.)?bilibili\.com/video/(BV[a-zA-Z0-9]+)'
+        r'(?:/\?(?:[^"]*))?"[^>]*>.*?</a></p>'
+    )
+    bv_anchor_replacement = (
+        r'<iframe width="560" height="315" '
+        r'src="//player.bilibili.com/player.html?bvid=\1&autoplay=0&high_quality=1" '
+        r'frameborder="0" allowfullscreen></iframe>'
+    )
+    html_content = re.sub(bv_anchor_pattern, bv_anchor_replacement, html_content)
+
+    # Bilibili (B站) BV 号 (plain text)
+    bv_plain_pattern = r'<p>https?://(?:www\.)?bilibili\.com/video/(BV[a-zA-Z0-9]+)(?:/[^<]*)?</p>'
+    bv_plain_replacement = (
+        r'<iframe width="560" height="315" '
+        r'src="//player.bilibili.com/player.html?bvid=\1&autoplay=0&high_quality=1" '
+        r'frameborder="0" allowfullscreen></iframe>'
+    )
+    html_content = re.sub(bv_plain_pattern, bv_plain_replacement, html_content)
+
+    # Bilibili (B站) av 号 (anchor)
+    av_anchor_pattern = (
+        r'<p><a href="https?://(?:www\.)?bilibili\.com/video/av(\d+)'
+        r'(?:/\?(?:[^"]*))?"[^>]*>.*?</a></p>'
+    )
+    av_anchor_replacement = (
+        r'<iframe width="560" height="315" '
+        r'src="//player.bilibili.com/player.html?aid=\1&autoplay=0&high_quality=1" '
+        r'frameborder="0" allowfullscreen></iframe>'
+    )
+    html_content = re.sub(av_anchor_pattern, av_anchor_replacement, html_content)
+
+    # Bilibili (B站) av 号 (plain text)
+    av_plain_pattern = r'<p>https?://(?:www\.)?bilibili\.com/video/av(\d+)(?:/[^<]*)?</p>'
+    av_plain_replacement = (
+        r'<iframe width="560" height="315" '
+        r'src="//player.bilibili.com/player.html?aid=\1&autoplay=0&high_quality=1" '
+        r'frameborder="0" allowfullscreen></iframe>'
+    )
+    html_content = re.sub(av_plain_pattern, av_plain_replacement, html_content)
+
     return html_content
 
 def home(request):
